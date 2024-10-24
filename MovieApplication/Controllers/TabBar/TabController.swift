@@ -13,7 +13,7 @@ class TabController: UITabBarController{
     override func viewDidLoad() {
         setupTabs()
         
-        self.tabBar.isTranslucent = false
+        self.tabBar.isTranslucent = true
     }
     
     private func setupTabs(){

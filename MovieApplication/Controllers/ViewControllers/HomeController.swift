@@ -48,6 +48,13 @@ class HomeController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         let movie = movies[indexPath.item]
             
         let baseURL = "https://image.tmdb.org/t/p/w500"
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleAddToFavorites))
+        tapGestureRecognizer.numberOfTapsRequired = 1
+        tapGestureRecognizer.numberOfTouchesRequired = 1
+        
+        self.collectionView.addGestureRecognizer(tapGestureRecognizer)
+        self.collectionView.isUserInteractionEnabled = true
             
         if let posterPath = movie.poster_path {
             let completeURLString = baseURL + posterPath
@@ -65,6 +72,11 @@ class HomeController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
             return 10
+    }
+    
+    @objc func handleAddToFavorites(){
+        let dvc = DetailsController()
+        self.navigationController?.pushViewController(dvc, animated: true)
     }
 }
 
