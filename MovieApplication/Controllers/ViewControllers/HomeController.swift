@@ -58,7 +58,9 @@ class HomeController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             
         if let posterPath = movie.poster_path {
             let completeURLString = baseURL + posterPath
-            cell.configure(with: completeURLString)
+            let title = movie.title
+            let releaseYear = movie.release_date
+            cell.configure(with: completeURLString, title: title, releaseYear: releaseYear)
         } else {
             print("Not a valid poster path.")
         }
@@ -67,11 +69,11 @@ class HomeController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-            return 10
+            return 30
     }
         
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-            return 10
+            return 5
     }
     
     @objc func handleAddToFavorites(){
