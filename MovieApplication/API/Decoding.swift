@@ -52,14 +52,12 @@ struct Decoding {
         task.resume()
     }
 
-
     static func saveMovies(_ movies: [Movies]) {
         let encoder = JSONEncoder()
 
         do {
             let data = try encoder.encode(movies)
-            print(data)
-            let fileURL = getDocumentsDirectory().appendingPathComponent("movies.json")
+            let fileURL = getDocumentsDirectory().appendingPathComponent("favorites.json") // Use um nome diferente para salvar favoritos
             try data.write(to: fileURL)
             print("Movies saved to \(fileURL)")
         } catch {
