@@ -16,26 +16,75 @@ struct Decoding {
         let urlString = "\(scheme)://\(baseURL)&api_key=\(API_KEY)"
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
+            completion(nil)
             return
         }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Error: \(error?.localizedDescription ?? "Unknown error")")
+            if let error = error {
+                print("Network request failed with error: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            guard let data = data else {
+                print("No data received from network request.")
+                completion(nil)
+                return
+            }
+
+            // Check for HTTP response errors
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: \(httpResponse.statusCode) - \(HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))")
                 completion(nil)
                 return
             }
             
             let decoder = JSONDecoder()
             do {
-                // Decode the parent response first, and then access 'results'
                 let response = try decoder.decode(MoviesResponse.self, from: data)
                 completion(response.results)
             } catch {
-                print("Error decoding data: \(error.localizedDescription)")
+                print("Decoding error: \(error.localizedDescription)")
                 completion(nil)
             }
         }
         task.resume()
+    }
+
+
+    static func saveMovies(_ movies: [Movies]) {
+        let encoder = JSONEncoder()
+
+        do {
+            let data = try encoder.encode(movies)
+            print(data)
+            let fileURL = getDocumentsDirectory().appendingPathComponent("movies.json")
+            try data.write(to: fileURL)
+            print("Movies saved to \(fileURL)")
+        } catch {
+            print("Error saving movies: \(error)")
+        }
+    }
+    
+    static func loadMovies() -> [Movies]? {
+        let fileURL = getDocumentsDirectory().appendingPathComponent("movies.json")
+
+        do {
+            let data = try Data(contentsOf: fileURL)
+            let decoder = JSONDecoder()
+            let movies = try decoder.decode([Movies].self, from: data)
+            print(movies)
+            return movies
+        } catch {
+            print("Error loading movies: \(error)")
+            return nil
+        }
+    }
+    
+    static func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        print(paths)
+        return paths[0]
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Movies: Decodable{
+struct Movies: Codable{
     let adult: Bool
     let backdrop_path: String?
     let genre_ids: [Int]
@@ -22,6 +22,7 @@ struct Movies: Decodable{
     let video: Bool
     let vote_average: Double
     let vote_count: Int
+    var isFavorite: Bool = false
     
     enum CodingKeys: String, CodingKey {
         case adult

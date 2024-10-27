@@ -32,8 +32,6 @@ class TabController: UITabBarController{
         
         nav.viewControllers.first?.navigationItem.title = title + "Controller"
         
-        nav.viewControllers.first?.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Button", style: .plain, target: nil, action: nil)
-        
         return nav
     }
     
