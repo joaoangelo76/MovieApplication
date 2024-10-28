@@ -7,72 +7,101 @@
 
 import UIKit
 
-class HomeController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+class HomeController: UIViewController, UISearchBarDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    var movies: [Movies] = []
-    var collectionView: UICollectionView!
+    private var movies: [Movies] = []
+    private var filteredMovies: [Movies] = []
+    
+    private let searchBar = UISearchBar()
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        layout.itemSize = CGSize(width: 100, height: 150) // Customize cell size as needed
+        return UICollectionView(frame: .zero, collectionViewLayout: layout)
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBlue
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 150, height: 225)
-        
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.backgroundColor = .white
+        setupSearchBar()
+        setupCollectionView()
+        loadMovies()
+    }
+    
+    private func setupSearchBar() {
+        searchBar.delegate = self
+        searchBar.placeholder = "Search Movies"
+        searchBar.sizeToFit()
+        navigationItem.titleView = searchBar
+    }
+    
+    private func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(MovieCell.self, forCellWithReuseIdentifier: MovieCell.identifier)
-        
+        collectionView.backgroundColor = .white
+        collectionView.register(MovieCell.self, forCellWithReuseIdentifier: "MovieCell")
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
-        collectionView.frame = view.bounds
         
-        Decoding.fetchMovies { [weak self] movies in
-            if let movies = movies {
-                self?.movies = movies
-                DispatchQueue.main.async {
-                    self?.collectionView.reloadData()
-                }
-            } else {
-                print("No movies found or an error occurred.")
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
+    private func loadMovies() {
+        Decoding.fetchMovies { [weak self] fetchedMovies in
+            DispatchQueue.main.async {
+                self?.movies = fetchedMovies ?? []
+                self?.filteredMovies = self?.movies ?? []
+                self?.collectionView.reloadData()
             }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movies.count
+        return filteredMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
-        let movie = movies[indexPath.item]
         
-        let baseURL = "https://image.tmdb.org/t/p/w500"
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCell", for: indexPath) as! MovieCell
+        let movie = filteredMovies[indexPath.row]
+        let title = filteredMovies[indexPath.row].title
+        let poster = filteredMovies[indexPath.row].poster_path!
+        let releaseDate = filteredMovies[indexPath.row].release_date
         
-        if let posterPath = movie.poster_path {
-            let completeURLString = baseURL + posterPath
-            let title = movie.title
-            let releaseYear = movie.release_date
-            cell.configure(with: completeURLString, title: title, releaseYear: releaseYear)
-        } else {
-            print("Not a valid poster path.")
+        cell.configure(with: poster, title: title, releaseYear: releaseDate)
+        
+        cell.onPosterTap = { [weak self] in
+            let detailsController = DetailsController(movie: movie)
+            self?.navigationController?.pushViewController(detailsController, animated: true)
         }
         
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 30
+    @objc func navigateToDetails(_ sender: UIButton) {
+        let selectedMovie = movies[sender.tag]
+        let detailsController = DetailsController(movie: selectedMovie)
+        navigationController?.pushViewController(detailsController, animated: true)
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedMovie = movies[indexPath.item]
-        let detailsVC = DetailsController()
-        detailsVC.movie = selectedMovie 
-        self.navigationController?.pushViewController(detailsVC, animated: true)
+}
+
+extension HomeController {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            filteredMovies = movies
+        } else {
+            filteredMovies = movies.filter { movie in
+                movie.title.lowercased().contains(searchText.lowercased()) ||
+                movie.overview.lowercased().contains(searchText.lowercased())
+            }
+        }
+        collectionView.reloadData()
     }
 }

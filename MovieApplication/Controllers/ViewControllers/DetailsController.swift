@@ -15,6 +15,15 @@ class DetailsController: UIViewController {
         set { movie?.isFavorite = newValue }
     }
     
+    init(movie: Movies) {
+        self.movie = movie
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let overviewLabel = UILabel()
@@ -101,15 +110,22 @@ class DetailsController: UIViewController {
     }
     
     private func loadImage(from urlString: String) {
-        guard let url = URL(string: urlString) else { return }
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL: \(urlString)")
+            return
+        }
 
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                DispatchQueue.main.async {
-                    self.posterImageView.image = nil
-                }
+            if let error = error {
+                print("Network request failed with error: \(error.localizedDescription)")
                 return
             }
+
+            guard let data = data else {
+                print("No data received from network request.")
+                return
+            }
+
             DispatchQueue.main.async {
                 self.posterImageView.image = UIImage(data: data)
             }

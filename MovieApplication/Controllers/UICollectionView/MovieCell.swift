@@ -5,17 +5,20 @@
 //  Created by João Ângelo on 23/10/24.
 //
 
-import Foundation
 import UIKit
 
-class MovieCell: UICollectionViewCell{
-    
+class MovieCell: UICollectionViewCell {
     static let identifier: String = "MovieCell"
     
+    // Closure to handle tap action
+    var onPosterTap: (() -> Void)?
+
+    // Poster image view with gesture
     let posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -38,35 +41,51 @@ class MovieCell: UICollectionViewCell{
         return year
     }()
     
-    override init(frame: CGRect){
+    override init(frame: CGRect) {
         super.init(frame: frame)
+        
         contentView.addSubview(posterImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(yearLabel)
-        posterImageView.frame = contentView.bounds
-        
+
+        // Add constraints for elements
         NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: posterImageView.centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: posterImageView.bottomAnchor),
-            yearLabel.centerXAnchor.constraint(equalTo: titleLabel.centerXAnchor),
-            yearLabel.centerYAnchor.constraint(equalTo: titleLabel.bottomAnchor)
+            posterImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            posterImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            posterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -50), // Adjust for labels
+            
+            titleLabel.topAnchor.constraint(equalTo: posterImageView.bottomAnchor, constant: 8),
+            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            
+            yearLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            yearLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         ])
+        
+        // Add tap gesture recognizer to the posterImageView
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handlePosterTap))
+        posterImageView.isUserInteractionEnabled = true
+        posterImageView.addGestureRecognizer(tapGesture)
+    }
+    
+    // Handle poster tap
+    @objc private func handlePosterTap() {
+        onPosterTap?()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with imageURL: String, title: String, releaseYear: String){
+    // Configure cell content
+    func configure(with imageURL: String, title: String, releaseYear: String) {
+        titleLabel.text = title
+        yearLabel.text = releaseYear
+        
         guard let url = URL(string: imageURL) else { return }
         
-        DispatchQueue.main.async {
-            self.titleLabel.text = title
-            self.yearLabel.text = releaseYear
-        }
-        
         URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data, let image = UIImage(data: data){
+            if let data = data, let image = UIImage(data: data) {
                 DispatchQueue.main.async {
                     self.posterImageView.image = image
                 }

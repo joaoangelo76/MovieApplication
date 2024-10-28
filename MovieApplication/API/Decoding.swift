@@ -42,7 +42,19 @@ struct Decoding {
             let decoder = JSONDecoder()
             do {
                 let response = try decoder.decode(MoviesResponse.self, from: data)
-                completion(response.results)
+                let baseImageURL = "https://image.tmdb.org/t/p/w500"
+                
+                // Update each movie’s poster path with the full URL
+                let updatedMovies = response.results.map { movie in
+                    var updatedMovie = movie
+                    if let posterPath = movie.poster_path {
+                        updatedMovie.poster_path = baseImageURL + posterPath
+                    }
+                    return updatedMovie
+                }
+                
+                // Completion with updated movies
+                completion(updatedMovies)
             } catch {
                 print("Decoding error: \(error.localizedDescription)")
                 completion(nil)
