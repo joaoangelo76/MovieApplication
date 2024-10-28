@@ -31,37 +31,30 @@ class DetailsController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        // Configure poster image view
         posterImageView.contentMode = .scaleAspectFit
         posterImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(posterImageView)
         
-        // Configure title label
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(titleLabel)
         
-        // Configure overview label
         overviewLabel.numberOfLines = 0
         overviewLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(overviewLabel)
         
-        // Configure rating label
         ratingLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(ratingLabel)
         
-        // Configure genre label
         genreLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(genreLabel)
         
-        // Configure favorite button
         favoriteButton.setTitle("Favoritar", for: .normal)
         favoriteButton.setTitleColor(.blue, for: .normal)
         favoriteButton.addTarget(self, action: #selector(toggleFavorite), for: .touchUpInside)
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(favoriteButton)
         
-        // Layout constraints
         NSLayoutConstraint.activate([
             posterImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             posterImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -89,7 +82,6 @@ class DetailsController: UIViewController {
     
     private func displayMovieDetails() {
         guard let movie = movie else {
-            // Handle error for empty movie data
             titleLabel.text = "Filme não encontrado"
             return
         }
@@ -110,11 +102,9 @@ class DetailsController: UIViewController {
     
     private func loadImage(from urlString: String) {
         guard let url = URL(string: urlString) else { return }
-        
-        // Show loading indicator (optional)
+
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
-                // Handle loading error
                 DispatchQueue.main.async {
                     self.posterImageView.image = nil
                 }
@@ -154,19 +144,16 @@ class DetailsController: UIViewController {
     }
     
     @objc private func toggleFavorite() {
-        guard var movie = movie else { return }
+        guard let movie = movie else { return }
         
         isFavorite.toggle()
         
         if isFavorite {
-            // Adiciona o filme aos favoritos
             FavoritesManager.shared.saveFavoriteMovie(movie)
         } else {
-            // Remove o filme dos favoritos
             FavoritesManager.shared.removeFavoriteMovie(movie)
         }
         
-        // Atualiza o título do botão
         favoriteButton.setTitle(isFavorite ? "Desfavoritar" : "Favoritar", for: .normal)
     }
 }

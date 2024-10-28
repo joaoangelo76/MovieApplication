@@ -70,9 +70,9 @@ class HomeController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedMovie = movies[indexPath.item] // Capture o filme selecionado
+        let selectedMovie = movies[indexPath.item]
         let detailsVC = DetailsController()
-        detailsVC.movie = selectedMovie // Passar o filme para o DetailsController
+        detailsVC.movie = selectedMovie 
         self.navigationController?.pushViewController(detailsVC, animated: true)
     }
 }

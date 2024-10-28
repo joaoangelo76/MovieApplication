@@ -1,5 +1,5 @@
 //
-//  Constants.swift
+//  Decoding.swift
 //  MovieApplication
 //
 //  Created by João Ângelo on 22/10/24.
@@ -33,7 +33,6 @@ struct Decoding {
                 return
             }
 
-            // Check for HTTP response errors
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                 print("HTTP Error: \(httpResponse.statusCode) - \(HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode))")
                 completion(nil)
@@ -57,22 +56,22 @@ struct Decoding {
 
         do {
             let data = try encoder.encode(movies)
-            let fileURL = getDocumentsDirectory().appendingPathComponent("favorites.json") // Use um nome diferente para salvar favoritos
+            let fileURL = getDocumentsDirectory().appendingPathComponent("favorites.json")
             try data.write(to: fileURL)
             print("Movies saved to \(fileURL)")
         } catch {
             print("Error saving movies: \(error)")
         }
     }
-    
+
     static func loadMovies() -> [Movies]? {
-        let fileURL = getDocumentsDirectory().appendingPathComponent("movies.json")
+        let fileURL = getDocumentsDirectory().appendingPathComponent("favorites.json")
 
         do {
             let data = try Data(contentsOf: fileURL)
             let decoder = JSONDecoder()
             let movies = try decoder.decode([Movies].self, from: data)
-            print(movies)
+            print("Movies loaded to: \(movies)")
             return movies
         } catch {
             print("Error loading movies: \(error)")

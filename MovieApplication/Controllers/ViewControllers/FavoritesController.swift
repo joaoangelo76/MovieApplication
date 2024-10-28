@@ -14,7 +14,7 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white // Altere para a cor que desejar
+        view.backgroundColor = .white
         
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 150, height: 225)
@@ -31,8 +31,7 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
     }
 
     private func loadFavoriteMovies() {
-        // Carrega os filmes favoritos do FavoritesManager
-        favoriteMovies = FavoritesManager.shared.loadFavoriteMovies()
+        favoriteMovies = FavoritesManager.shared.getFavoriteMovies()
         collectionView.reloadData()
     }
     
