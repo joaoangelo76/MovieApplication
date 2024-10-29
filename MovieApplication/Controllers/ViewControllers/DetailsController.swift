@@ -9,11 +9,7 @@ import UIKit
 
 class DetailsController: UIViewController {
     
-    var movie: Movies? 
-    private var isFavorite: Bool {
-        get { movie?.isFavorite ?? false }
-        set { movie?.isFavorite = newValue }
-    }
+    var movie: Movies?
     
     init(movie: Movies) {
         self.movie = movie
@@ -106,7 +102,8 @@ class DetailsController: UIViewController {
         ratingLabel.text = "Nota: \(movie.vote_average)"
         genreLabel.text = "Gêneros: \(getGenresString(from: movie.genre_ids))"
         
-        favoriteButton.setTitle(isFavorite ? "Desfavoritar" : "Favoritar", for: .normal)
+        // Check if the movie is a favorite using FavoritesManager
+        favoriteButton.setTitle(FavoritesManager.shared.isMovieFavorite(movie) ? "Desfavoritar" : "Favoritar", for: .normal)
     }
     
     private func loadImage(from urlString: String) {
@@ -162,14 +159,13 @@ class DetailsController: UIViewController {
     @objc private func toggleFavorite() {
         guard let movie = movie else { return }
         
-        isFavorite.toggle()
-        
-        if isFavorite {
-            FavoritesManager.shared.saveFavoriteMovie(movie)
-        } else {
+        // Check current favorite status and toggle it
+        if FavoritesManager.shared.isMovieFavorite(movie) {
             FavoritesManager.shared.removeFavoriteMovie(movie)
+            favoriteButton.setTitle("Favoritar", for: .normal)
+        } else {
+            FavoritesManager.shared.saveFavoriteMovie(movie)
+            favoriteButton.setTitle("Desfavoritar", for: .normal)
         }
-        
-        favoriteButton.setTitle(isFavorite ? "Desfavoritar" : "Favoritar", for: .normal)
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Movies: Codable{
+struct Movies: Codable, Equatable{
     var adult: Bool
     var backdrop_path: String?
     var genre_ids: [Int]
