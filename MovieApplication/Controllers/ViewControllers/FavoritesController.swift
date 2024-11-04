@@ -10,26 +10,32 @@ import UIKit
 class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UISearchBarDelegate {
 
     var favoriteMovies: [Movies] = []
-    var filteredMovies: [Movies] = [] // Array to hold filtered movies
+    var filteredMovies: [Movies] = []
     var collectionView: UICollectionView!
     var searchBar: UISearchBar!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
-        // Initialize and configure the search bar
+        view.backgroundColor = UIColor(named: "NavyBackground") // Usando Navy Background
+
         searchBar = UISearchBar()
         searchBar.placeholder = "Search for movies..."
         searchBar.delegate = self
-        navigationItem.titleView = searchBar // Add search bar to the navigation bar
+        searchBar.barTintColor = UIColor(named: "NavyBackground") // Fundo do search bar
+        searchBar.searchTextField.textColor = UIColor(named: "VibrantYellow") // Texto da search bar em Vibrant Yellow
+        searchBar.searchTextField.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         
+        navigationItem.titleView = searchBar
+        
+        // Configuração do layout da Collection View
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 150, height: 225)
+        layout.itemSize = CGSize(width: 200, height: 400)
         
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.backgroundColor = UIColor(named: "NavyBackground") // Usando Navy Background
         collectionView.register(MovieCell.self, forCellWithReuseIdentifier: MovieCell.identifier)
         
         view.addSubview(collectionView)
@@ -44,30 +50,28 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
 
     private func loadFavoriteMovies() {
         favoriteMovies = FavoritesManager.shared.getFavoriteMovies()
-        filteredMovies = favoriteMovies // Initially, all movies are shown
+        filteredMovies = favoriteMovies
         collectionView.reloadData()
     }
     
-    // MARK: - UISearchBarDelegate
-    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
-            filteredMovies = favoriteMovies // Show all movies if search text is empty
+            filteredMovies = favoriteMovies
         } else {
             filteredMovies = favoriteMovies.filter { movie in
-                movie.title.lowercased().contains(searchText.lowercased()) // Filter based on title
+                movie.title.lowercased().contains(searchText.lowercased())
             }
         }
-        collectionView.reloadData() // Reload collection view with filtered results
+        collectionView.reloadData()
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return filteredMovies.count // Return count of filtered movies
+        return filteredMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
-        let movie = filteredMovies[indexPath.item] // Get the movie from filtered array
+        let movie = filteredMovies[indexPath.item]
         
         let baseURL = "https://image.tmdb.org/t/p/w500"
         
@@ -75,13 +79,15 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
             let completeURLString = baseURL + posterPath
             let title = movie.title
             let releaseYear = movie.release_date
+            
+            // Configuração de MovieCell com cores atualizadas
             cell.configure(with: completeURLString, title: title, releaseYear: releaseYear)
+            cell.titleLabel.textColor = UIColor(named: "VibrantYellow") // Título em Vibrant Yellow
         }
         
-        // Add tap gesture to the poster
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handlePosterTap(_:)))
         cell.addGestureRecognizer(tapGesture)
-        cell.isUserInteractionEnabled = true // Enable interaction with the cell
+        cell.isUserInteractionEnabled = true
 
         return cell
     }
@@ -90,7 +96,7 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
         guard let cell = sender.view as? MovieCell,
               let indexPath = collectionView.indexPath(for: cell) else { return }
         
-        let selectedMovie = filteredMovies[indexPath.item] // Use filtered movies
+        let selectedMovie = filteredMovies[indexPath.item]
         let detailsController = DetailsController(movie: selectedMovie)
         navigationController?.pushViewController(detailsController, animated: true)
     }

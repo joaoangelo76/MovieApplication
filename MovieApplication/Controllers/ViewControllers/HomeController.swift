@@ -13,34 +13,41 @@ class HomeController: UIViewController, UISearchBarDelegate, UICollectionViewDat
     private var filteredMovies: [Movies] = []
     
     private let searchBar = UISearchBar()
+    
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
         layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        layout.itemSize = CGSize(width: 100, height: 150) // Customize cell size as needed
+        layout.itemSize = CGSize(width: 200, height: 400)
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "NavyBackground") // Azul Marinho profundo
         setupSearchBar()
         setupCollectionView()
         loadMovies()
     }
-    
-    private func setupSearchBar() {
+
+    func setupSearchBar() {
         searchBar.delegate = self
-        searchBar.placeholder = "Search Movies"
-        searchBar.sizeToFit()
+        searchBar.placeholder = "Buscar Filmes"
+        searchBar.searchTextField.textColor = UIColor(named: "VibrantYellow") // Texto em amarelo vibrante
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(
+            string: "Buscar Filmes",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor(named: "VibrantYellow")!]
+        )
+        searchBar.barTintColor = UIColor(named: "NavyBackground") // Fundo azul marinho
+        searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGrey") // Fundo da barra de busca
         navigationItem.titleView = searchBar
     }
-    
-    private func setupCollectionView() {
+
+    func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = UIColor(named: "NavyBackground") // Fundo azul marinho
         collectionView.register(MovieCell.self, forCellWithReuseIdentifier: "MovieCell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
@@ -75,8 +82,12 @@ class HomeController: UIViewController, UISearchBarDelegate, UICollectionViewDat
         let poster = filteredMovies[indexPath.row].poster_path!
         let releaseDate = filteredMovies[indexPath.row].release_date
         
+        // Configure a célula com a cor do título ajustada
         cell.configure(with: poster, title: title, releaseYear: releaseDate)
         
+        // Define a cor do título para Vibrant Yellow
+        cell.titleLabel.textColor = UIColor(named: "VibrantYellow") // Altera a cor do título
+
         cell.onPosterTap = { [weak self] in
             let detailsController = DetailsController(movie: movie)
             self?.navigationController?.pushViewController(detailsController, animated: true)

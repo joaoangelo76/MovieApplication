@@ -44,7 +44,6 @@ struct Decoding {
                 let response = try decoder.decode(MoviesResponse.self, from: data)
                 let baseImageURL = "https://image.tmdb.org/t/p/w500"
                 
-                // Update each movie’s poster path with the full URL
                 let updatedMovies = response.results.map { movie in
                     var updatedMovie = movie
                     if let posterPath = movie.poster_path {
@@ -53,7 +52,6 @@ struct Decoding {
                     return updatedMovie
                 }
                 
-                // Completion with updated movies
                 completion(updatedMovies)
             } catch {
                 print("Decoding error: \(error.localizedDescription)")

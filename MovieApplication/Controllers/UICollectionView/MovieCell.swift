@@ -10,10 +10,8 @@ import UIKit
 class MovieCell: UICollectionViewCell {
     static let identifier: String = "MovieCell"
     
-    // Closure to handle tap action
     var onPosterTap: (() -> Void)?
 
-    // Poster image view with gesture
     let posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -24,9 +22,9 @@ class MovieCell: UICollectionViewCell {
     
     let titleLabel: UILabel = {
         let title = UILabel()
-        title.font = UIFont.boldSystemFont(ofSize: 16)
         title.textColor = .black
         title.numberOfLines = 1
+        title.font = UIFont(name: "JostRoman-Bold", size: 16)
         title.textAlignment = .center
         title.translatesAutoresizingMaskIntoConstraints = false
         return title
@@ -47,14 +45,15 @@ class MovieCell: UICollectionViewCell {
         contentView.addSubview(posterImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(yearLabel)
-
-        // Add constraints for elements
+        
+        contentView.layer.cornerRadius = 10
+        contentView.layer.masksToBounds = true
+        
         NSLayoutConstraint.activate([
             posterImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             posterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             posterImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            posterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -50), // Adjust for labels
-            
+            posterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -50),
             titleLabel.topAnchor.constraint(equalTo: posterImageView.bottomAnchor, constant: 8),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
@@ -62,13 +61,11 @@ class MovieCell: UICollectionViewCell {
             yearLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         ])
         
-        // Add tap gesture recognizer to the posterImageView
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handlePosterTap))
         posterImageView.isUserInteractionEnabled = true
         posterImageView.addGestureRecognizer(tapGesture)
     }
     
-    // Handle poster tap
     @objc private func handlePosterTap() {
         onPosterTap?()
     }
@@ -77,7 +74,6 @@ class MovieCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Configure cell content
     func configure(with imageURL: String, title: String, releaseYear: String) {
         titleLabel.text = title
         yearLabel.text = releaseYear

@@ -34,28 +34,41 @@ class DetailsController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "NavyBackground") // Azul Marinho profundo
         
         posterImageView.contentMode = .scaleAspectFit
         posterImageView.translatesAutoresizingMaskIntoConstraints = false
+        posterImageView.layer.cornerRadius = 10
+        posterImageView.clipsToBounds = true
         view.addSubview(posterImageView)
         
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
+        titleLabel.font = UIFont(name: "JostRoman-Bold", size: 24)
+        titleLabel.textColor = UIColor(named: "VibrantYellow") // Amarelo vibrante
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(titleLabel)
         
         overviewLabel.numberOfLines = 0
+        overviewLabel.font = UIFont(name: "Jost-Regular", size: 16)
+        overviewLabel.textColor = UIColor.lightGray // Cinza claro para contraste
         overviewLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(overviewLabel)
         
         ratingLabel.translatesAutoresizingMaskIntoConstraints = false
+        ratingLabel.font = UIFont(name: "JostRoman-SemiBold", size: 16)
+        ratingLabel.textColor = UIColor.lightGray // Mesma cor do texto da sinopse
         view.addSubview(ratingLabel)
         
         genreLabel.translatesAutoresizingMaskIntoConstraints = false
+        genreLabel.font = UIFont(name: "Jost-Regular", size: 16)
+        genreLabel.textColor = UIColor.lightGray // Mesma cor do texto da sinopse
         view.addSubview(genreLabel)
         
         favoriteButton.setTitle("Favoritar", for: .normal)
-        favoriteButton.setTitleColor(.blue, for: .normal)
+        favoriteButton.setTitleColor(UIColor(named: "VibrantYellow"), for: .normal) // Amarelo vibrante para destaque
+        favoriteButton.backgroundColor = UIColor(named: "NavyBackground")
+        favoriteButton.layer.cornerRadius = 8
+        favoriteButton.layer.borderWidth = 1
+        favoriteButton.layer.borderColor = UIColor(named: "VibrantYellow")?.cgColor // Borda amarela para contraste
         favoriteButton.addTarget(self, action: #selector(toggleFavorite), for: .touchUpInside)
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(favoriteButton)
@@ -82,6 +95,8 @@ class DetailsController: UIViewController {
             
             favoriteButton.topAnchor.constraint(equalTo: genreLabel.bottomAnchor, constant: 20),
             favoriteButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 120),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 40),
         ])
     }
     
@@ -101,8 +116,7 @@ class DetailsController: UIViewController {
         overviewLabel.text = movie.overview
         ratingLabel.text = "Nota: \(movie.vote_average)"
         genreLabel.text = "Gêneros: \(getGenresString(from: movie.genre_ids))"
-        
-        // Check if the movie is a favorite using FavoritesManager
+
         favoriteButton.setTitle(FavoritesManager.shared.isMovieFavorite(movie) ? "Desfavoritar" : "Favoritar", for: .normal)
     }
     
@@ -159,7 +173,6 @@ class DetailsController: UIViewController {
     @objc private func toggleFavorite() {
         guard let movie = movie else { return }
         
-        // Check current favorite status and toggle it
         if FavoritesManager.shared.isMovieFavorite(movie) {
             FavoritesManager.shared.removeFavoriteMovie(movie)
             favoriteButton.setTitle("Favoritar", for: .normal)
