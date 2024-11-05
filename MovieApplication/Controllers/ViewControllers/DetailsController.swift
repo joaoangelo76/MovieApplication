@@ -34,7 +34,7 @@ class DetailsController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = UIColor(named: "NavyBackground") // Azul Marinho profundo
+        view.backgroundColor = UIColor(named: "NavyBackground")
         
         posterImageView.contentMode = .scaleAspectFit
         posterImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -43,32 +43,32 @@ class DetailsController: UIViewController {
         view.addSubview(posterImageView)
         
         titleLabel.font = UIFont(name: "JostRoman-Bold", size: 24)
-        titleLabel.textColor = UIColor(named: "VibrantYellow") // Amarelo vibrante
+        titleLabel.textColor = UIColor(named: "VibrantYellow")
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(titleLabel)
         
         overviewLabel.numberOfLines = 0
         overviewLabel.font = UIFont(name: "Jost-Regular", size: 16)
-        overviewLabel.textColor = UIColor.lightGray // Cinza claro para contraste
+        overviewLabel.textColor = UIColor.lightGray
         overviewLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(overviewLabel)
         
         ratingLabel.translatesAutoresizingMaskIntoConstraints = false
         ratingLabel.font = UIFont(name: "JostRoman-SemiBold", size: 16)
-        ratingLabel.textColor = UIColor.lightGray // Mesma cor do texto da sinopse
+        ratingLabel.textColor = UIColor.lightGray
         view.addSubview(ratingLabel)
         
         genreLabel.translatesAutoresizingMaskIntoConstraints = false
         genreLabel.font = UIFont(name: "Jost-Regular", size: 16)
-        genreLabel.textColor = UIColor.lightGray // Mesma cor do texto da sinopse
+        genreLabel.textColor = UIColor.lightGray
         view.addSubview(genreLabel)
         
         favoriteButton.setTitle("Favoritar", for: .normal)
-        favoriteButton.setTitleColor(UIColor(named: "VibrantYellow"), for: .normal) // Amarelo vibrante para destaque
+        favoriteButton.setTitleColor(UIColor(named: "VibrantYellow"), for: .normal)
         favoriteButton.backgroundColor = UIColor(named: "NavyBackground")
         favoriteButton.layer.cornerRadius = 8
         favoriteButton.layer.borderWidth = 1
-        favoriteButton.layer.borderColor = UIColor(named: "VibrantYellow")?.cgColor // Borda amarela para contraste
+        favoriteButton.layer.borderColor = UIColor(named: "VibrantYellow")?.cgColor 
         favoriteButton.addTarget(self, action: #selector(toggleFavorite), for: .touchUpInside)
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(favoriteButton)

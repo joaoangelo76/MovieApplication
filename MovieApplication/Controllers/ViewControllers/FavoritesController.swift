@@ -17,18 +17,17 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(named: "NavyBackground") // Usando Navy Background
+        view.backgroundColor = UIColor(named: "NavyBackground")
 
         searchBar = UISearchBar()
         searchBar.placeholder = "Search for movies..."
         searchBar.delegate = self
-        searchBar.barTintColor = UIColor(named: "NavyBackground") // Fundo do search bar
-        searchBar.searchTextField.textColor = UIColor(named: "VibrantYellow") // Texto da search bar em Vibrant Yellow
+        searchBar.barTintColor = UIColor(named: "NavyBackground")
+        searchBar.searchTextField.textColor = UIColor(named: "VibrantYellow")
         searchBar.searchTextField.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         
         navigationItem.titleView = searchBar
         
-        // Configuração do layout da Collection View
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 200, height: 400)
         
@@ -80,9 +79,8 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
             let title = movie.title
             let releaseYear = movie.release_date
             
-            // Configuração de MovieCell com cores atualizadas
             cell.configure(with: completeURLString, title: title, releaseYear: releaseYear)
-            cell.titleLabel.textColor = UIColor(named: "VibrantYellow") // Título em Vibrant Yellow
+            cell.titleLabel.textColor = UIColor(named: "VibrantYellow")
         }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handlePosterTap(_:)))

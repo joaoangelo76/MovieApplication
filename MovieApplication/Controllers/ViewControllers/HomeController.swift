@@ -25,7 +25,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UICollectionViewDat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "NavyBackground") // Azul Marinho profundo
+        view.backgroundColor = UIColor(named: "NavyBackground")
         setupSearchBar()
         setupCollectionView()
         loadMovies()
@@ -34,20 +34,20 @@ class HomeController: UIViewController, UISearchBarDelegate, UICollectionViewDat
     func setupSearchBar() {
         searchBar.delegate = self
         searchBar.placeholder = "Buscar Filmes"
-        searchBar.searchTextField.textColor = UIColor(named: "VibrantYellow") // Texto em amarelo vibrante
+        searchBar.searchTextField.textColor = UIColor(named: "VibrantYellow")
         searchBar.searchTextField.attributedPlaceholder = NSAttributedString(
             string: "Buscar Filmes",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor(named: "VibrantYellow")!]
         )
-        searchBar.barTintColor = UIColor(named: "NavyBackground") // Fundo azul marinho
-        searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGrey") // Fundo da barra de busca
+        searchBar.barTintColor = UIColor(named: "NavyBackground")
+        searchBar.searchTextField.backgroundColor = UIColor(named: "DarkGrey")
         navigationItem.titleView = searchBar
     }
 
     func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.backgroundColor = UIColor(named: "NavyBackground") // Fundo azul marinho
+        collectionView.backgroundColor = UIColor(named: "NavyBackground") 
         collectionView.register(MovieCell.self, forCellWithReuseIdentifier: "MovieCell")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
@@ -82,11 +82,9 @@ class HomeController: UIViewController, UISearchBarDelegate, UICollectionViewDat
         let poster = filteredMovies[indexPath.row].poster_path!
         let releaseDate = filteredMovies[indexPath.row].release_date
         
-        // Configure a célula com a cor do título ajustada
         cell.configure(with: poster, title: title, releaseYear: releaseDate)
         
-        // Define a cor do título para Vibrant Yellow
-        cell.titleLabel.textColor = UIColor(named: "VibrantYellow") // Altera a cor do título
+        cell.titleLabel.textColor = UIColor(named: "VibrantYellow")
 
         cell.onPosterTap = { [weak self] in
             let detailsController = DetailsController(movie: movie)

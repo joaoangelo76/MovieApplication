@@ -14,11 +14,10 @@ class TabController: UITabBarController {
         super.viewDidLoad()
         setupTabs()
         
-        // Set the tab bar's appearance
         self.tabBar.isTranslucent = false
-        self.tabBar.barTintColor = UIColor(named: "NavyBackground") // Navy blue background
-        self.tabBar.tintColor = UIColor(named: "VibrantYellow") // Vibrant yellow for selected items
-        self.tabBar.unselectedItemTintColor = UIColor.lightGray // Light gray for unselected items
+        self.tabBar.barTintColor = UIColor(named: "NavyBackground")
+        self.tabBar.tintColor = UIColor(named: "VibrantYellow")
+        self.tabBar.unselectedItemTintColor = UIColor.lightGray
     }
     
     private func setupTabs() {
