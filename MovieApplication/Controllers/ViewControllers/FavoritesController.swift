@@ -71,21 +71,24 @@ class FavoritesController: UIViewController, UICollectionViewDelegateFlowLayout,
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
         let movie = filteredMovies[indexPath.item]
-        
+
         let baseURL = "https://image.tmdb.org/t/p/w500"
         
         if let posterPath = movie.poster_path {
             let completeURLString = baseURL + posterPath
             let title = movie.title
             let releaseYear = movie.release_date
-            
+
             cell.configure(with: completeURLString, title: title, releaseYear: releaseYear)
             cell.titleLabel.textColor = UIColor(named: "VibrantYellow")
         }
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handlePosterTap(_:)))
-        cell.addGestureRecognizer(tapGesture)
-        cell.isUserInteractionEnabled = true
+
+        cell.onPosterTap = { [weak self] in
+            guard let self = self else { return }
+            let selectedMovie = self.filteredMovies[indexPath.item]
+            let detailsController = DetailsController(movie: selectedMovie)
+            self.navigationController?.pushViewController(detailsController, animated: true)
+        }
 
         return cell
     }
